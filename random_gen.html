@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Glitch Effect</title>
+    <style>
+        body {
+            background: #121212;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .glitch-link {
+            position: relative;
+            display: inline-block;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 2rem;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .glitch-link::before,
+        .glitch-link::after {
+            content: attr(data-glitch);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .glitch-link::before {
+            color: red;
+            z-index: -1;
+            transform: translate(3px, -3px);
+        }
+
+        .glitch-link::after {
+            color: blue;
+            z-index: -2;
+            transform: translate(-3px, 3px);
+        }
+
+        .glitch-link.active::before,
+        .glitch-link.active::after {
+            opacity: 1;
+            animation: glitch 0.3s steps(2, end) infinite;
+        }
+
+        @keyframes glitch {
+            0% {
+                transform: translate(3px, -3px);
+            }
+            50% {
+                transform: translate(-3px, 3px);
+            }
+            100% {
+                transform: translate(3px, -3px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#" class="glitch-link" data-glitch="Click Me">Click Me</a>
+
+    <script>
+        document.querySelectorAll('.glitch-link').forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                link.classList.add('active');
+                setTimeout(() => {
+                    link.classList.remove('active');
+                }, 300);
+            });
+
+            // Variables to hold original text and interval
+            let originalText = link.textContent;
+            let interval;
+
+            // On hover, start the "counter" effect
+            link.addEventListener('mouseover', () => {
+                const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                const textLength = originalText.length;
+
+                interval = setInterval(() => {
+                    let randomText = '';
+                    for (let i = 0; i < textLength; i++) {
+                        randomText += characters[Math.floor(Math.random() * characters.length)];
+                    }
+                    link.textContent = randomText;
+                }, 50);
+            });
+
+            // On mouseout, stop the effect and revert text
+            link.addEventListener('mouseout', () => {
+                clearInterval(interval);
+                link.textContent = originalText;
+            });
+        });
+    </script>
+</body>
+</html>
